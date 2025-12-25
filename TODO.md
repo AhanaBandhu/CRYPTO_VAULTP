@@ -1,0 +1,4 @@
+- [x] Remove the duplicate updateConnectionStatus function definition
+- [x] Move event listeners for connectWalletBtn and document click outside of updateConnectionStatus to register properly on DOMContentLoaded
+- [x] Call updateConnectionStatus initially on DOMContentLoaded and after wallet connection
+- [x] Ensure proper async/await usage and error handling in the code

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Vault - Secure Receipt Storage</title>
+    <title>Crypto Vault - Secure Receipt Storage</title>
+        <!-- MetaMask will be automatically injected -->
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" type="text/javascript"></script>
+    <script src="js/contract.js" type="text/javascript"></script>
+    <script src="js/blockchain.js" type="text/javascript"></script>
+</head>
+
+<body>
+ 
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🔒 Crypto Vault</div>
+        <nav class="nav">
+            <a href="#home">Home</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contact">Contact Us</a>
+            <a href="#blog">Blog</a>
+            <div id="auth-buttons">
+                <button id="connect-wallet-btn" class="auth-btn">Connect Wallet</button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <h1>Welcome to Crypto Vault</h1>
+            <p>The secure place where your receipts are safe and protected using blockchain technology. Store, verify,
+                and manage all your important documents with complete transparency.</p>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="container">
+                <div class="upload-box">
+                    <h3>Upload Your Receipt</h3>
+                    <div class="upload-controls">
+                        <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+                            📁 Upload from Device
+                        </button>
+                        <button class="camera-btn" onclick="openCameraModal()">
+                            📷 Capture Image
+                        </button>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleFileUpload(event)">
+                    <input type="file" id="camera-input" accept="image/*" capture="camera"
+                        onchange="handleFileUpload(event)">
+
+                    <input type="text" class="title-input" id="receipt-title"
+                        placeholder="Enter your receipt title here">
+                    <div id="preview-container"></div>
+                    <button class="upload-final-btn" onclick="uploadReceipt()" id="upload-btn" disabled>Upload
+                        Receipt</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section" id="gallery">
+            <div class="container">
+                <h2 class="section-title">Receipt Gallery</h2>
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Sample receipts will be added here -->
+                </div>
+
+                <!-- Albums Section -->
+                <div class="albums-section">
+                    <h3 class="section-title">Albums</h3>
+                    <div class="albums-grid" id="albums-grid">
+                        <!-- Albums will be added here -->
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="create-album" onclick="createNewAlbum()">+ Create New Album</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Blockchain Page -->
+    <div class="blockchain-page" id="blockchain-page">
+        <div class="blockchain-container">
+            <button class="close-btn" onclick="closeBlockchainPage()">×</button>
+            <h2>Blockchain Verification</h2>
+            <div class="blockchain-steps">
+                <div class="step" id="step1">
+                    <h4>1. Connect Wallet</h4>
+                    <p>Connect your MetaMask wallet</p>
+                </div>
+                <div class="step" id="step2">
+                    <h4>2. IPFS Storage</h4>
+                    <p>Upload to decentralized storage</p>
+                </div>
+                <div class="step" id="step3">
+                    <h4>3. Smart Contract</h4>
+                    <p>Deploy and generate hash</p>
+                </div>
+            </div>
+
+            <button class="connect-wallet-btn" onclick="connectWalletToBlockchain()">Connect MetaMask Wallet</button>
+            <div id="wallet-info" style="margin-top: 1rem; display: none;">
+                <p><strong>Connected Address:</strong> <span id="connected-address"></span></p>
+                <p><strong>Network:</strong> Avalanche Fuji Testnet</p>
+            </div>
+
+            <div id="wallet-status" style="margin: 1rem 0; color: #666;"></div>
+            <div id="ipfs-container" style="margin-top: 1rem; display: none;">
+                <h4>IPFS Hash:</h4>
+                <div class="hash-display" id="ipfs-hash"></div>
+            </div>
+
+            <div id="step3-actions" style="margin-top: 1rem; display:none;">
+                <button id="deploy-btn" class="upload-btn">Deploy</button>
+            </div>
+
+            <div id="hash-container" style="display: none; margin-top: 1rem;">
+                <h4>Transaction Hash:</h4>
+                <div class="hash-display" id="transaction-hash"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pinata Settings Modal -->
+    <div class="modal" id="pinata-modal" style="display:none;">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closePinataModal()">×</button>
+            <h3>Pinata Settings</h3>
+            <p>Paste your Pinata JWT (from pinata.cloud → API Keys)</p>
+            <input type="text" id="pinata-jwt-input" placeholder="Pinata JWT" style="width:100%; padding:8px; margin:8px 0;">
+            <div style="text-align:center; margin-top:1rem;">
+                <button class="upload-btn" onclick="savePinataJwt()">Save JWT</button>
+                <button class="upload-btn" onclick="closePinataModal()" style="background:#6c757d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div style="position:fixed; right:12px; bottom:12px; z-index:1000;">
+        <button class="upload-btn" onclick="testPinataUpload()" title="Test Pinata connectivity">Test Pinata Upload</button>
+    </div>
+
+    <!-- Modal for Receipt Viewing -->
+    <div class="modal" id="receipt-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="modal" id="camera-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeCameraModal()">×</button>
+            <h3>Capture Receipt Image</h3>
+            <div id="camera-container">
+                <video id="camera-video" autoplay playsinline
+                    style="width: 100%; max-width: 400px; border-radius: 8px;"></video>
+                <div id="camera-placeholder"
+                    style="width: 100%; max-width: 400px; height: 300px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">
+                    Camera preview will appear here
+                </div>
+                <div style="margin-top: 1rem; text-align: center;">
+                    <button id="start-camera-btn" class="upload-btn" onclick="startCamera()">Start Camera</button>
+                    <button id="capture-btn" class="upload-btn" onclick="captureImage()" disabled>Capture Image</button>
+                    <button id="stop-camera-btn" class="upload-btn" onclick="stopCamera()" disabled>Stop Camera</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Album Creation Modal -->
+    <div class="modal" id="album-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAlbumModal()">×</button>
+            <h3>Create New Album</h3>
+            <input type="text" id="album-name" placeholder="Enter album name" class="title-input">
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="upload-btn" onclick="createAlbum()">Create Album</button>
+                <button class="upload-btn" onclick="closeAlbumModal()" style="background: #6c757d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/step3.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

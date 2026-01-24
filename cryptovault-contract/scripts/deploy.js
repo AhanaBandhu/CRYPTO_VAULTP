@@ -16,7 +16,7 @@ async function main() {
   console.log("🎉 CryptoVault deployed to:", await cryptoVault.getAddress());
   console.log("📝 SAVE THIS ADDRESS:", await cryptoVault.getAddress());
   console.log("🔍 View on Snowtrace:", `https://testnet.snowtrace.io/address/${await cryptoVault.getAddress()}`);
-}
+} 
 
 main()
   .then(() => process.exit(0))
